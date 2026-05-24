@@ -1,4 +1,6 @@
-﻿namespace proiect_arhitectura_sistemelor_de_calcul
+﻿using proiect_arhitectura_sistemelor_de_calcul.Models;
+
+namespace proiect_arhitectura_sistemelor_de_calcul
 {
     partial class CPUViewerForm
     {
@@ -1167,6 +1169,12 @@
         private List<String> parsedLines;
 
         private InstructionLoader instructionLoader = new InstructionLoader();
+
+        private MicroprogramLoader microprogramLoader = new MicroprogramLoader();
+
+        private ProcessorCore processorCore;
+        
+        private bool isAssembled = false;
 
         #endregion
 

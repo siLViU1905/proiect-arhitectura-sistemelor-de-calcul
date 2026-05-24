@@ -1,11 +1,12 @@
 ﻿
 using ClosedXML.Excel;
+using proiect_arhitectura_sistemelor_de_calcul.Models;
 
 namespace proiect_arhitectura_sistemelor_de_calcul
 {
     internal class InstructionLoader
     {
-        private Dictionary<String, int> opcodesMap = new Dictionary<String, int>();
+        private Dictionary<String, InstructionDef> opcodesMap = new Dictionary<String, InstructionDef>();
 
         public void Load(String path)
         {
@@ -23,7 +24,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
 
                     int opcode = 0;
 
-                    for (int col = 2; col <= 18; col++)
+                    for (int col = 2; col <= 17; col++)
                     {
                         var cell = row.Cell(col);
                         string val = cell.GetValue<string>().Trim();
@@ -34,9 +35,19 @@ namespace proiect_arhitectura_sistemelor_de_calcul
                             break;
                     }
 
-                    opcodesMap[mnemonic] = opcode;
+                    opcodesMap[mnemonic] = new InstructionDef
+                    {
+                        Mnemonic = mnemonic,
+                        Opcode = opcode
+                    };
+                    
                 }
             }
+        }
+        
+        public Dictionary<string, InstructionDef> GetOpcodes()
+        {
+            return this.opcodesMap;
         }
     }
 }
