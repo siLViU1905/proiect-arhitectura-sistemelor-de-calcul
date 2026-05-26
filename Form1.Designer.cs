@@ -33,6 +33,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
+            asembleToolStripMenuItem = new ToolStripMenuItem();
             stepToolStripMenuItem = new ToolStripMenuItem();
             openFileDialog = new OpenFileDialog();
             generalRegistersGroup = new GroupBox();
@@ -125,6 +126,8 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             inputSValue = new TextBox();
             parsedTextBox = new TextBox();
             parsedTextLabel = new Label();
+            currentInstructionTextBox = new TextBox();
+            currentInstructionLabel = new Label();
             menuStrip.SuspendLayout();
             generalRegistersGroup.SuspendLayout();
             generalRegistersTableLayout.SuspendLayout();
@@ -143,7 +146,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             // menuStrip
             // 
             menuStrip.ImageScalingSize = new Size(20, 20);
-            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, stepToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, asembleToolStripMenuItem, stepToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(1241, 28);
@@ -163,6 +166,13 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             openToolStripMenuItem.Size = new Size(137, 26);
             openToolStripMenuItem.Text = "Open...";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // asembleToolStripMenuItem
+            // 
+            asembleToolStripMenuItem.Name = "asembleToolStripMenuItem";
+            asembleToolStripMenuItem.Size = new Size(87, 24);
+            asembleToolStripMenuItem.Text = "Assemble";
+            asembleToolStripMenuItem.Click += asembleToolStripMenuItem_Click;
             // 
             // stepToolStripMenuItem
             // 
@@ -1121,11 +1131,30 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             parsedTextLabel.TabIndex = 8;
             parsedTextLabel.Text = "Parsed:";
             // 
+            // currentInstructionTextBox
+            // 
+            currentInstructionTextBox.Location = new Point(534, 422);
+            currentInstructionTextBox.Multiline = true;
+            currentInstructionTextBox.Name = "currentInstructionTextBox";
+            currentInstructionTextBox.Size = new Size(226, 28);
+            currentInstructionTextBox.TabIndex = 9;
+            // 
+            // currentInstructionLabel
+            // 
+            currentInstructionLabel.AutoSize = true;
+            currentInstructionLabel.Location = new Point(537, 399);
+            currentInstructionLabel.Name = "currentInstructionLabel";
+            currentInstructionLabel.Size = new Size(133, 20);
+            currentInstructionLabel.TabIndex = 10;
+            currentInstructionLabel.Text = "Current Instruction:";
+            // 
             // CPUViewerForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1241, 606);
+            Controls.Add(currentInstructionLabel);
+            Controls.Add(currentInstructionTextBox);
             Controls.Add(parsedTextLabel);
             Controls.Add(parsedTextBox);
             Controls.Add(aluGroup);
@@ -1173,8 +1202,8 @@ namespace proiect_arhitectura_sistemelor_de_calcul
         private MicroprogramLoader microprogramLoader = new MicroprogramLoader();
 
         private ProcessorCore processorCore;
-        
-        private bool isAssembled = false;
+
+        private Assembler assembler;
 
         #endregion
 
@@ -1273,5 +1302,8 @@ namespace proiect_arhitectura_sistemelor_de_calcul
         private TextBox outputRValue;
         private TextBox parsedTextBox;
         private Label parsedTextLabel;
+        private ToolStripMenuItem asembleToolStripMenuItem;
+        private TextBox currentInstructionTextBox;
+        private Label currentInstructionLabel;
     }
 }

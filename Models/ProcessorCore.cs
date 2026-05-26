@@ -397,6 +397,11 @@ public class ProcessorCore
         int destinationRegister = InstructionRegister & 0xF;
         MemoryDataRegister = GeneralRegisters[destinationRegister];
     }
+
+    public string GetCurrentInstruction()
+    {
+        return rom[microProgramCounter].Label;
+    }
     
     public void ExecuteClockCycle()
     {
@@ -404,10 +409,8 @@ public class ProcessorCore
         {
             return;
         }
-        
+
         var microInstruction = rom[microProgramCounter];
-        
-        MessageBox.Show((microInstruction.Label));
        
         if (microInstruction.Label is "INC:" or "DEC:" or "NEG:" or 
             "ASL:" or "ASR:" or "LSR:" or "ROL:" or "ROR:" or "RLC:" or "RRC:")
