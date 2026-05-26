@@ -57,6 +57,10 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             {
                 Assembler assembler = new Assembler(instructionLoader.GetOpcodes());
                 int[] program = assembler.Assemble(parsedLines);
+                
+                processorCore = new ProcessorCore(microprogramLoader.GetMicroprogram().ToList(),
+                    instructionLoader.GetOpcodes());
+                
                 processorCore.LoadProgram(program, 0);
                 isAssembled = true;
             }

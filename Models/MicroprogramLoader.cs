@@ -35,8 +35,10 @@ public class MicroprogramLoader
                     jumpData = (jumpData.text, jumpData.value - 1);
                 if (label == "FOD_AD_B2:")
                     jumpData = (jumpData.text, jumpData.value - 7);
-                if (label == "B3:")
-                    jumpData = (jumpData.text, 37);
+                if (label == "B4:")
+                {
+                    indexData = (indexData.text, 6);
+                }
                 var instruction = new MicroInstruction
                 {
                     Label = label,
@@ -75,6 +77,7 @@ public class MicroprogramLoader
                     JumpAddressValue = jumpData.value,
                 };
                 MicroprogramMemory.Add(instruction);
+                Console.WriteLine(instruction.Label + instruction.IndexSelectionText);
             }
         }
     }

@@ -40,7 +40,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
                         Mnemonic = mnemonic,
                         Opcode = opcode
                     };
-                    
+                    Console.WriteLine(opcodesMap[mnemonic].Opcode);
                 }
             }
         }

@@ -62,7 +62,15 @@ public class ProcessorCore
             "PdMDRd" => MemoryDataRegister,
             "PdMDRdNeg" => (-MemoryDataRegister) & 0xFFFF,
             "PdPCd" => ProgramCounter,
-            "PdIR [7…0]d" => InstructionRegister & 0xFF,
+            "PdIR [7…0]d" => microInstruction.Label switch
+            {
+                "SEC:" => 0x01,
+                "SEV:" => 0x02,
+                "SEZ:" => 0x04,
+                "SES:" => 0x08,
+                "SCC:" => 0x0F,
+                _ => InstructionRegister & 0xFF
+            },
             "Pd0d" => 0,
             "NONE" => 0
         };
@@ -80,16 +88,18 @@ public class ProcessorCore
             "AND" => T & dbusValue,
             "OR" => T | dbusValue,
             "XOR" => T ^ dbusValue,
-            "ASL" => dbusValue << 1,
-            "ASR" => dbusValue >> 1,
+            "ASL" => (dbusValue << 1),
+            "ASR" => (dbusValue >> 1),
             "LSR" => (int)((uint)dbusValue >> 1),
-            "ROL" => ((dbusValue << 1) | (dbusValue >> 15)) & 0xFFFF,
-            "ROR" => ((dbusValue >> 1) | (dbusValue << 15)) & 0xFFFF,
-            "RLC" => ((dbusValue << 1) | ((Flags >> 3) & 1)) & 0xFFFF,
-            "RRC" => ((dbusValue >> 1) | (((Flags >> 3) & 1) << 15)) & 0xFFFF,
+            "ROL" => (dbusValue << 1) | (dbusValue >> 15),
+            "ROR" => (dbusValue >> 1) | (dbusValue << 15),
+            "RLC" => (dbusValue << 1) | (Flags & 1),
+            "RRC" => (dbusValue >> 1) | ((Flags & 1)<< 15),
             "NONE" => 0
         };
         
+        result &= 0xFFFF;
+
         CurrentAluValue = result & 0xFFFF;
 
         return result;
@@ -122,8 +132,6 @@ public class ProcessorCore
                 break;
             case "NONE":
                 break;
-            default:
-                throw new InvalidOperationException($"Unknown RBUS: {microInstruction.RbusText}");
         }
     }
     
@@ -143,8 +151,6 @@ public class ProcessorCore
                 break;
             case "NONE":
                 break;
-            default:
-                throw new InvalidOperationException($"Unknown memory operation: {microInstruction.MemoryText}");
         }
     }
 
@@ -183,19 +189,17 @@ public class ProcessorCore
                 break;
             case "NONE":
                 break;
-            default:
-                throw new InvalidOperationException($"Unknown operation: {microInstruction.OtherOperationsText}");
         }
     }
 
     private void UpdateArithmeticFlags(int result)
     {
-        bool negativeFlag = (result & 0x8000) != 0;
+        bool signFlag = (result & 0x8000) != 0;
         bool zeroFlag = (result & 0xFFFF) == 0;
         bool carryFlag = result > 0xFFFF || result < 0;
         bool overflowFlag = result > 32767 || result < -32768;
         
-        Flags = (negativeFlag ? 1 : 0) << 3 |
+        Flags = (signFlag ? 1 : 0) << 3 |
                 (zeroFlag     ? 1 : 0) << 2 |
                 (overflowFlag ? 1 : 0) << 1 |
                 (carryFlag    ? 1 : 0);
@@ -203,19 +207,19 @@ public class ProcessorCore
     
     private void UpdateLogicFlags(int result)
     {
-        bool negativeFlag = (result & 0x8000) != 0;
+        bool signFlag = (result & 0x8000) != 0;
         bool zeroFlag = (result & 0xFFFF) == 0;
 
-        Flags = (negativeFlag ? 1 : 0) << 3 |
+        Flags = (signFlag ? 1 : 0) << 3 |
                 (zeroFlag     ? 1 : 0) << 2;
     }
     
     private int ComputeNextMicroAddress(MicroInstruction microInstruction) 
     {
-        bool zeroFlag    = ((Flags >> 2) & 1) == 1;
         bool signFlag    = ((Flags >> 3) & 1) == 1;
-        bool carryFlag   = ((Flags >> 0) & 1) == 1;
+        bool zeroFlag    = ((Flags >> 2) & 1) == 1;
         bool overflowFlag = ((Flags >> 1) & 1) == 1;
+        bool carryFlag   = ((Flags >> 0) & 1) == 1;
         
         bool inversion = microInstruction.InversionText == "F";
 
@@ -226,7 +230,15 @@ public class ProcessorCore
 
             case "JUMPI":
                 int index = ComputeIndex(microInstruction.IndexSelectionValue);
-                return microInstruction.JumpAddressValue + index;
+                int jumpAddress = microInstruction.JumpAddressValue;
+                if (microInstruction.Label == "B3:")
+                {
+                    if (((InstructionRegister >> 13) & 0x7) == 0x6) 
+                        jumpAddress = 56;
+                    else
+                        jumpAddress = 37; 
+                }
+                return jumpAddress + index;
 
             case "IF Z JUMPI":
                 return ShouldJump(zeroFlag, inversion)
@@ -277,7 +289,11 @@ public class ProcessorCore
             case 0: 
                 return 0;
         
-            case 1: 
+            case 1:
+                if (((InstructionRegister >> 13) & 0x7) == 0x6)
+                    return 2;
+                if (((InstructionRegister >> 14) & 0x3) == 0x1)
+                    return 0; 
                 return (InstructionRegister >> 14) & 0x3;
         
             case 2: 
@@ -292,9 +308,43 @@ public class ProcessorCore
             case 5:
                 if (((InstructionRegister >> 14) & 0x3) == 0x2) 
                     return (InstructionRegister >> 6) & 0x3F;
+                if (((InstructionRegister >> 13) & 0x7) == 0x6)
+                {
+                    int opcode = (InstructionRegister >> 8) & 0xFF;
+                    return opcode switch
+                    {
+                        0xC0 => 60,
+                        0xC1 => 2,  
+                        0xC2 => 0,  
+                        0xC3 => 6,  
+                        0xC4 => 4,  
+                        0xC5 => 8,  
+                        0xC6 => 10,
+                        0xC7 => 12, 
+                        0xC8 => 14, 
+                        _ => 0
+                    };
+                }
                 return (InstructionRegister >> 12) & 0xF; 
         
             case 6: 
+                if (((InstructionRegister >> 13) & 0x7) == 0x7)
+                {
+                    return (InstructionRegister & 0xFFFF) switch
+                    {
+                        0xE001 => 30,  
+                        0xE002 => 28,  
+                        0xE003 => 32,  
+                        0xE004 => 34,  
+                        0xE006 => 38,  
+                        0xE007 => 36,  
+                        0xE008 => 40, 
+                        0xE009 => 42, 
+                        0xE00B => 20, 
+                        0xE00E => 44,  
+                        _ => (InstructionRegister >> 1) & 0x3F
+                    };
+                }
                 return (InstructionRegister >> 1) & 0x3F;
         
             case 7: 
@@ -357,6 +407,8 @@ public class ProcessorCore
         
         var microInstruction = rom[microProgramCounter];
         
+        MessageBox.Show((microInstruction.Label));
+       
         if (microInstruction.Label is "INC:" or "DEC:" or "NEG:" or 
             "ASL:" or "ASR:" or "LSR:" or "ROL:" or "ROR:" or "RLC:" or "RRC:")
         {

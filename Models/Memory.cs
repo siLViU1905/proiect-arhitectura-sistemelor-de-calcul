@@ -6,11 +6,15 @@ public class Memory
     
     public int Read(int address)
     {
+        if (address < 0 || address >= 65536)
+            return 0;
         return ram[address];
     }
 
     public void Write(int address, int value)
     {
+        if (address < 0 || address >= 65536)
+            return;
         ram[address] = value;
     }
 }
