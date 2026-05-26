@@ -1,3 +1,4 @@
+using ClosedXML.Excel;
 using proiect_arhitectura_sistemelor_de_calcul.Models;
 
 namespace proiect_arhitectura_sistemelor_de_calcul
@@ -74,6 +75,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
         {
             pcValue.Text = "0x" + processorCore.ProgramCounter.ToString("X");
             irValue.Text = "0x" + processorCore.InstructionRegister.ToString("X");
+            currentInstructionTextBox.Text = processorCore.GetCurrentInstruction();
             flagValue.Text = "0x" + processorCore.Flags.ToString("X");
             spValue.Text = "0x" + processorCore.StackPointer.ToString("X");
 
@@ -116,8 +118,15 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             {
                 int[] program = assembler.Assemble(parsedLines);
 
+                
+
                 processorCore.LoadProgram(program, 0);
                 MessageBox.Show("Code assembled!", "Assembler", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                InstructionMapper mapper = new InstructionMapper(instructionLoader.GetOpcodes());
+                mapper.Export(parsedLines, "../../../ProgramAsamblat.xlsx");
+                MessageBox.Show("Code exported!", "InstructionMapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             }
             else
                 MessageBox.Show("Code already assembled", "Assembler", MessageBoxButtons.OK, MessageBoxIcon.Information);

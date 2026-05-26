@@ -397,6 +397,11 @@ public class ProcessorCore
         int destinationRegister = InstructionRegister & 0xF;
         MemoryDataRegister = GeneralRegisters[destinationRegister];
     }
+
+    public string GetCurrentInstruction()
+    {
+        return rom[microProgramCounter].Label;
+    }
     
     public void ExecuteClockCycle()
     {

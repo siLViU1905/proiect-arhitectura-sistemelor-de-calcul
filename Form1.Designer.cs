@@ -126,6 +126,8 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             inputSValue = new TextBox();
             parsedTextBox = new TextBox();
             parsedTextLabel = new Label();
+            currentInstructionTextBox = new TextBox();
+            currentInstructionLabel = new Label();
             menuStrip.SuspendLayout();
             generalRegistersGroup.SuspendLayout();
             generalRegistersTableLayout.SuspendLayout();
@@ -1129,11 +1131,30 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             parsedTextLabel.TabIndex = 8;
             parsedTextLabel.Text = "Parsed:";
             // 
+            // currentInstructionTextBox
+            // 
+            currentInstructionTextBox.Location = new Point(534, 422);
+            currentInstructionTextBox.Multiline = true;
+            currentInstructionTextBox.Name = "currentInstructionTextBox";
+            currentInstructionTextBox.Size = new Size(226, 28);
+            currentInstructionTextBox.TabIndex = 9;
+            // 
+            // currentInstructionLabel
+            // 
+            currentInstructionLabel.AutoSize = true;
+            currentInstructionLabel.Location = new Point(537, 399);
+            currentInstructionLabel.Name = "currentInstructionLabel";
+            currentInstructionLabel.Size = new Size(133, 20);
+            currentInstructionLabel.TabIndex = 10;
+            currentInstructionLabel.Text = "Current Instruction:";
+            // 
             // CPUViewerForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1241, 606);
+            Controls.Add(currentInstructionLabel);
+            Controls.Add(currentInstructionTextBox);
             Controls.Add(parsedTextLabel);
             Controls.Add(parsedTextBox);
             Controls.Add(aluGroup);
@@ -1282,5 +1303,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
         private TextBox parsedTextBox;
         private Label parsedTextLabel;
         private ToolStripMenuItem asembleToolStripMenuItem;
+        private TextBox currentInstructionTextBox;
+        private Label currentInstructionLabel;
     }
 }
