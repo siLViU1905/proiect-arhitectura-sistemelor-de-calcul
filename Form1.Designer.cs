@@ -33,6 +33,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
+            asembleToolStripMenuItem = new ToolStripMenuItem();
             stepToolStripMenuItem = new ToolStripMenuItem();
             openFileDialog = new OpenFileDialog();
             generalRegistersGroup = new GroupBox();
@@ -143,7 +144,7 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             // menuStrip
             // 
             menuStrip.ImageScalingSize = new Size(20, 20);
-            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, stepToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, asembleToolStripMenuItem, stepToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(1241, 28);
@@ -163,6 +164,13 @@ namespace proiect_arhitectura_sistemelor_de_calcul
             openToolStripMenuItem.Size = new Size(137, 26);
             openToolStripMenuItem.Text = "Open...";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // asembleToolStripMenuItem
+            // 
+            asembleToolStripMenuItem.Name = "asembleToolStripMenuItem";
+            asembleToolStripMenuItem.Size = new Size(87, 24);
+            asembleToolStripMenuItem.Text = "Assemble";
+            asembleToolStripMenuItem.Click += asembleToolStripMenuItem_Click;
             // 
             // stepToolStripMenuItem
             // 
@@ -1173,8 +1181,8 @@ namespace proiect_arhitectura_sistemelor_de_calcul
         private MicroprogramLoader microprogramLoader = new MicroprogramLoader();
 
         private ProcessorCore processorCore;
-        
-        private bool isAssembled = false;
+
+        private Assembler assembler;
 
         #endregion
 
@@ -1273,5 +1281,6 @@ namespace proiect_arhitectura_sistemelor_de_calcul
         private TextBox outputRValue;
         private TextBox parsedTextBox;
         private Label parsedTextLabel;
+        private ToolStripMenuItem asembleToolStripMenuItem;
     }
 }

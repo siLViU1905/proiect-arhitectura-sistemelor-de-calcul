@@ -3,6 +3,12 @@ namespace proiect_arhitectura_sistemelor_de_calcul.Models;
 public class Assembler
 {
     private readonly IReadOnlyDictionary<string, InstructionDef> opcodesMap;
+    private bool isAsembled = false;
+
+    public bool IsAsembled()
+    {
+        return isAsembled;
+    }
 
     public Assembler(IReadOnlyDictionary<string, InstructionDef> opcodesMap)
     {
@@ -81,7 +87,7 @@ public class Assembler
                 continue;
             }
         }
-        
+        isAsembled = true;
         return result.ToArray();
     }
 

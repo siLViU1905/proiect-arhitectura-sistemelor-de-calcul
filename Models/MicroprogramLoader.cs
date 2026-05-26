@@ -77,7 +77,6 @@ public class MicroprogramLoader
                     JumpAddressValue = jumpData.value,
                 };
                 MicroprogramMemory.Add(instruction);
-                Console.WriteLine(instruction.Label + instruction.IndexSelectionText);
             }
         }
     }

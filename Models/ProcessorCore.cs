@@ -404,10 +404,8 @@ public class ProcessorCore
         {
             return;
         }
-        
+
         var microInstruction = rom[microProgramCounter];
-        
-        MessageBox.Show((microInstruction.Label));
        
         if (microInstruction.Label is "INC:" or "DEC:" or "NEG:" or 
             "ASL:" or "ASR:" or "LSR:" or "ROL:" or "ROR:" or "RLC:" or "RRC:")
