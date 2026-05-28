@@ -9,8 +9,6 @@ public class ProcessorCore
     
     private IReadOnlyDictionary<string, InstructionDef> opcodesMap = new Dictionary<string, InstructionDef>();
     
-    public DecodeInstruction? DecodedInstruction { get; private set; }
-    
     public int[] GeneralRegisters { get; private set; } = new int[16];
     public int ProgramCounter { get; private set; }
     public int InstructionRegister { get; private set; }
